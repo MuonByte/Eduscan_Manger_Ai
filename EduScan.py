@@ -139,7 +139,7 @@ def extract_text(result):
 def generate_gpt_neo_response(prompt, max_tokens=150):
     print("Generating response using GPT-Neo...")
     try:
-        inputs = tokenizer(prompt, return_tensors="pt")  # تعريف inputs مفقود
+        inputs = tokenizer(prompt, return_tensors="pt")  
         outputs = model.generate(
             **inputs,
             max_new_tokens=max_tokens,
@@ -179,8 +179,7 @@ def summarize_text(text):
 def ask_gpt_neo(query, context_passages):
     print("Asking GPT-Neo with RAG context...")
 
-    # تأكد أن كل عنصر في context_passages هو نص (str)
-    # إذا كان فيه قوائم، ناخذ أول عنصر منها (كما في كودك الأصلي)
+
     clean_passages = []
     for p in context_passages:
         if isinstance(p, list) and len(p) > 0:
@@ -188,7 +187,7 @@ def ask_gpt_neo(query, context_passages):
         elif isinstance(p, str):
             clean_passages.append(p)
         else:
-            # تجاهل أي عناصر غير نصية أو فارغة
+            
             continue
 
     if clean_passages:
@@ -196,7 +195,7 @@ def ask_gpt_neo(query, context_passages):
     else:
         combined = "No context available."
 
-    print(f"Combined context (preview):\n{combined[:500]}")  # لعرض جزء من المحتوى للتأكد
+    print(f"Combined context (preview):\n{combined[:500]}") 
 
     prompt = (
         "You are an expert educational assistant. You have the following context passages.\n"
