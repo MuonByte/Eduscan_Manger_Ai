@@ -19,7 +19,6 @@ from transformers import AutoTokenizer, AutoModelForCausalLM
 
 app = FastAPI()
 
-# ====== إعدادات النماذج ======
 GPT_MODEL_NAME = "EleutherAI/gpt-neo-125M"
 tokenizer = AutoTokenizer.from_pretrained(GPT_MODEL_NAME)
 model = AutoModelForCausalLM.from_pretrained(GPT_MODEL_NAME)
@@ -31,12 +30,10 @@ EMBEDDING_MODEL = SentenceTransformer(MODEL_DIR)
 
 nltk.download('punkt', quiet=True)
 
-# ====== إعدادات RAG ======
 INDEX_DIR = 'rag_index'
 client = Client(Settings(persist_directory=INDEX_DIR, anonymized_telemetry=False))
 collection = client.get_or_create_collection('edu_docs')
 
-# ====== أدوات OCR وغيرها ======
 def auto_crop_image(image_path):
     try:
         cropper = Cropper()
@@ -119,7 +116,6 @@ def ask_gpt_neo(query, context_passages):
     )
     return generate_gpt_neo_response(prompt)
 
-# ====== API: رفع ملف PDF أو صورة متعددة الصفحات ======
 @app.post("/api/ai/upload-file")
 async def process_file(file: UploadFile = File(...)):
     os.makedirs("temp", exist_ok=True)
@@ -129,7 +125,6 @@ async def process_file(file: UploadFile = File(...)):
     with open(file_path, "wb") as f:
         shutil.copyfileobj(file.file, f)
 
-    # OCR شامل كل الصفحات
     result = run_ocr(file_path)
     raw_text = extract_text(result)
 
@@ -137,7 +132,6 @@ async def process_file(file: UploadFile = File(...)):
     summary = summarize_text(corrected)
     segments = segment_text(corrected)
 
-    # حفظ في ملف
     out_path = os.path.join("output", file.filename + ".txt")
     with open(out_path, 'w', encoding='utf-8') as f:
         f.write(corrected)
@@ -153,7 +147,6 @@ async def process_file(file: UploadFile = File(...)):
         "augmented":segments
     })
 
-# ====== API: سؤال باستخدام RAG ======
 @app.post("/api/ai")
 async def ask_question(prompt:str):
     prompt = prompt
