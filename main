@@ -1,9 +1,11 @@
-import os
 from datetime import datetime
+import os
 from image_utils import select_files, auto_crop_image, run_ocr, extract_text
-from text_utils import correct_text, summarize_text
+from text_utils import correct_text, summarize_text, segment_text
 from index_utils import build_or_load_index
-from chat_utils import retrieve_passages, ask_mistral, save_chat_log
+from chat_utils import save_chat_log
+from mistral_api import ask_mistral
+from index_utils import retrieve_passages
 
 def main():
     print("📌 Starting main application flow...")
@@ -44,7 +46,7 @@ def main():
         corrected = correct_text(raw_text)
         if corrected.startswith("Error:"):
             print(f"Warning: Text correction failed: {corrected}")
-            corrected = raw_text
+            corrected = raw_text  
 
         os.makedirs('output', exist_ok=True)
         fname = os.path.basename(path) + '.md'
@@ -58,9 +60,7 @@ def main():
         summary = summarize_text(corrected)
         if summary.startswith("Error:"):
             print(f"Warning: Summarization failed: {summary}")
-            summary = "Summary could not be generated."
-
-        save_processed_outputs(summary)
+            summary = "No summary generated."
 
         with open(os.path.join(output_dir, 'raw_text.md'), 'w', encoding='utf-8') as f:
             f.write(raw_text if raw_text else "No text extracted.")
@@ -68,8 +68,6 @@ def main():
             f.write(corrected if corrected else "No corrected text.")
         with open(os.path.join(output_dir, 'summarize_text.md'), 'w', encoding='utf-8') as f:
             f.write(summary if summary else "No summary generated.")
-        with open(os.path.join(output_dir, 'ask_mistral.md'), 'w', encoding='utf-8') as f:
-            f.write(inspect.getsource(ask_mistral))
 
     chat_history = []
     while True:
