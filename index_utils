@@ -41,3 +41,20 @@ def build_or_load_index(folder='output', persist_dir=INDEX_DIR):
         print(f"Loaded existing index with {collection.count()} documents.")
     print("RAG index operation completed.")
     return collection
+
+def retrieve_passages(query, collection, top_k=7):
+    print(f"Retrieving top {top_k} passages for query: '{query}'...")
+    try:
+        q_emb = EMBEDDING_MODEL.encode(query)
+        results = collection.query(query_embeddings=[q_emb], n_results=top_k)
+        print("Passage retrieval completed.")
+        flat_docs = []
+        for doc_group in results['documents']:
+            if isinstance(doc_group, list):
+                flat_docs.extend(doc_group)
+            else:
+                flat_docs.append(doc_group)
+        return flat_docs
+    except Exception as e:
+        print(f"Error in passage retrieval: {e}")
+        return []
