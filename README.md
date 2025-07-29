@@ -65,7 +65,7 @@ Entry point of the application. Calls all components step-by-step. Manages file 
 1. **Download [LM Studio](https://lmstudio.ai/)**
   2. Open LM Studio, then **download the model**: `mistralai/mistral-7b-instruct-v0.3` from the "Models" section.
   3. Go to the **"Server" tab** and click **“Start Server”**. This launches a local API endpoint.
-  4. Inside your code (e.g., `mistral_api.py`), make sure the `url` is set to your local endpoint, for example:
+  4. Inside your code ( `mistral_api.py`), make sure the `url` is set to your local endpoint, for example:
      ```python
      url = "http://192.168.19.1:1234/v1/chat/completions"
      ```
