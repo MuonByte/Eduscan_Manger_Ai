@@ -1,0 +1,40 @@
+from fastapi import FastAPI
+from pydantic import BaseModel
+from image_utils import run_ocr, extract_text
+from text_utils import correct_text, summarize_text
+from index_utils import build_or_load_index, retrieve_passages
+from mistral_api import ask_mistral
+import os
+
+app = FastAPI()
+
+class OCRRequest(BaseModel):
+    file_path: str
+
+class QueryRequest(BaseModel):
+    query: str
+
+@app.post("/ocr")
+async def perform_ocr(request: OCRRequest):
+    ocr_result = run_ocr(request.file_path)
+    text = extract_text(ocr_result)
+    corrected_text = correct_text(text)
+    return {"raw_text": text, "corrected_text": corrected_text}
+
+@app.post("/summarize")
+async def summarize(request: OCRRequest):
+    ocr_result = run_ocr(request.file_path)
+    text = extract_text(ocr_result)
+    summary = summarize_text(text)
+    return {"summary": summary}
+
+@app.post("/query")
+async def query_index(request: QueryRequest):
+    collection = build_or_load_index()
+    passages = retrieve_passages(request.query, collection)
+    answer = ask_mistral(request.query, passages)
+    return {"answer": answer}
+
+if __name__ == "__main__":
+    import uvicorn
+    uvicorn.run(app, host="0.0.0.0", port=8000)
