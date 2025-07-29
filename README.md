@@ -65,11 +65,13 @@ Entry point of the application. Calls all components step-by-step. Manages file 
 1. **Download [LM Studio](https://lmstudio.ai/)**
   2. Open LM Studio, then **download the model**: `mistralai/mistral-7b-instruct-v0.3` from the "Models" section.
   3. Go to the **"Server" tab** and click **“Start Server”**. This launches a local API endpoint.
-  4. Inside your code ( `mistral_api.py`), make sure the `url` is set to your local endpoint, for example:
+  4. ![LM](https://github.com/user-attachments/assets/8f097692-0fc3-4833-ba31-9ace495ccf91)
+
+  5. Inside your code ( `mistral_api.py`), make sure the `url` is set to your local endpoint, for example:
      ```python
-     url = "http://192.168.19.1:1234/v1/chat/completions"
+     url = "http://Your Local server/v1/chat/completions"
      ```
-  5. Your system is now ready to make local Mistral API requests, ensuring **full privacy and low latency** without cloud-based models.
+  6. Your system is now ready to make local Mistral API requests, ensuring **full privacy and low latency** without cloud-based models.
 - `generate_mistral_response(prompt, max_tokens)`: Send user prompt to Mistral API (local LM Studio)
 - `ask_mistral(query, context)`: Combines context with query and gets answer from Mistral
 
